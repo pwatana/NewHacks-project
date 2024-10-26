@@ -17,15 +17,10 @@
             <h3>Basic Information</h3>
             <label for="reporterName">Reporter Name:</label>
             <input type="text" id="reporterName" name="reporterName" required>
-
+        </div>
             <label for="contactInfo">Contact Information (Phone, Email, etc.):</label>
             <input type="text" id="contactInfo" name="contactInfo" required>
-
-            <label for="dateTime">Date & Time of Report:</label>
-            <input type="text" id="dateTime" name="dateTime" required>
-
-            <label for="location">Location (City, Region, Coordinates if possible):</label>
-            <input type="text" id="location" name="location" required>
+        
         </div>
 
         <!-- Disaster Type -->
@@ -44,16 +39,17 @@
         <!-- Current Observations -->
         <div class="section">
             <h3>Current Observations</h3>
-            <label for="severity">Current Condition Severity (1-5):</label>
-            <input type="number" id="severity" name="severity" min="1" max="5" required>
+            <label for="severity">Current Condition Severity (1-10):</label>
+            <div class="slidecontainer">
+                <input type="range" min="1" max="10" value="10" class="slider" id="myRange">
+            </div>
 
-            <label for="weatherConditions">Weather Conditions:</label>
-            <input type="text" id="weatherConditions" name="weatherConditions">
-
+            </div>
             <label>Visible Hazards:</label>
             <label><input type="checkbox" name="hazards" value="Flooded Roads"> Flooded roads</label>
-            <label><input type="checkbox" name="hazards" value="Fallen Trees"> Fallen trees</label>
+            <label><input type="checkbox" name="hazards" value="Fallen Trees"> Fallen trees</label>  
             <label><input type="checkbox" name="hazards" value="Damaged Buildings"> Damaged buildings</label>
+
             <label><input type="checkbox" name="hazards" value="Power Lines"> Power lines down</label>
             <label><input type="checkbox" name="hazards" value="Blocked Roads"> Blocked exits or roads</label>
             <label><input type="checkbox" name="hazards" value="Other"> Other</label>
@@ -76,7 +72,8 @@
         <!-- Additional Needs -->
         <div class="section">
             <h3>Immediate Needs</h3>
-            <label><input type="checkbox" name="needs" value="Medical"> Medical assistance</label>
+            <label>Do you have house?</label>
+            <input
             <label><input type="checkbox" name="needs" value="Evacuation"> Evacuation assistance</label>
             <label><input type="checkbox" name="needs" value="Supplies"> Food and water supplies</label>
             <label><input type="checkbox" name="needs" value="Rescue"> Rescue services</label>
