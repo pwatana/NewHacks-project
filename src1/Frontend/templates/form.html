@@ -64,7 +64,7 @@
             <h3>Basic Information</h3>
             <label for="reporterName">Reporter Name:</label>
             <input type="text" id="reporterName" name="reporterName" required>
-
+            </div>
             <label for="contactInfo">Contact Information (Phone, Email, etc.):</label>
             <input type="text" id="contactInfo" name="contactInfo" required>
         </div>
@@ -83,18 +83,27 @@
         </div>
 
         <!-- Current Observations -->
-        <div class="section">
-            <h3>Current Observations</h3>
-            <label for="severity">Current Condition Severity (1-10):</label>
-            <input type="range" min="1" max="10" value="5" class="slider" id="severity" name="severity">
-            
-            <label>Visible Hazards:</label>
-            <label><input type="checkbox" name="hazards" value="Flooded Roads"> Flooded roads</label>
-            <label><input type="checkbox" name="hazards" value="Fallen Trees"> Fallen trees</label>  
-            <label><input type="checkbox" name="hazards" value="Damaged Buildings"> Damaged buildings</label>
-            <label><input type="checkbox" name="hazards" value="Power Lines"> Power lines down</label>
-            <label><input type="checkbox" name="hazards" value="Blocked Roads"> Blocked exits or roads</label>
-            <label><input type="checkbox" name="hazards" value="Other"> Other</label>
+        <label>Visible Hazards:</label>
+            <div class="form-container">
+                <div>
+                    <label><input type="checkbox" name="hazards" value="Flooded Roads"> Flooded roads</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" name="hazards" value="Fallen Trees"> Fallen trees</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" name="hazards" value="Damaged Buildings"> Damaged buildings</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" name="hazards" value="Power Lines"> Power lines down</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" name="hazards" value="Blocked Roads"> Blocked exits or roads</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" name="hazards" value="Other"> Other</label>
+                </div>
+            </div>
 
             <label for="casualties">Casualties or Injuries Reported?</label>
             <select id="casualties" name="casualties">
