@@ -25,7 +25,7 @@ def form():
 
         fieldnames = ["name", "contactInfo", "disasterType", "hazards", "casualties", "propertyDamange", "shelter", "food", "water"]
 
-        with open('data.csv','w') as inFile:
+        with open('../data/data.csv','a') as inFile:
             writer = csv.DictWriter(inFile, fieldnames=fieldnames)
 
             # writerow() will write a row in your csv file
