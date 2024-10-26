@@ -1,4 +1,6 @@
-from flask import Flask
+from flask import Flask, render_template, flash, request, session
+
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -7,7 +9,8 @@ def main():
 
 @app.route('/form')
 def form(): 
-    return 
+    """ Report the live condition of disasters """
+
 
 if __name__ == "__main__": 
     app.run(debug=True)
