@@ -4,17 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Natural Disaster Live Condition Report</title>
-    <link rel="stylesheet" href="static/style.css"> <!-- Link to the external CSS file -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="static/style.css"> 
     <style>
-        /* Ensure the map has a height */
         #map {
-            height: 400px; /* Adjust height as needed */
-            width: 100%; /* Ensure it takes the full width */
+            height: 400px; 
+            width: 100%; 
         }
         .form-container {
-            margin: 20px;
+            margin-left: auto;
         }
     </style>
 </head>
@@ -32,17 +31,15 @@
     </div>
 
     <!-- Form Section -->
-    <form action="#" method="post">
+    <form id="disasterForm" action="#" method="post">
         <!-- Basic Information -->
         <div class="section">
             <h3>Basic Information</h3>
             <label for="reporterName">Reporter Name:</label>
             <input type="text" id="reporterName" name="reporterName" required>
-            </div>
             <label for="contactInfo">Contact Information (Phone, Email, etc.):</label>
             <input type="text" id="contactInfo" name="contactInfo" required>
         </div>
-            </div>
 
         <!-- Disaster Type -->
         <div class="section">
@@ -65,25 +62,24 @@
                 <input type="range" name = 'severity' min="1" max="10" value="10" class="slider" id="myRange">
             </div>
             
-        <div class="form-container">
             <label>Visible Hazards:</label>
             <div>
-                <label><input type="checkbox" name="hazards" value="Flooded Roads"> Flooded roads</label>
+                <label><input type="checkbox" class="hazard" name="hazards" value="Flooded Roads" > Flooded roads</label>
             </div>
             <div>
-                <label><input type="checkbox" name="hazards" value="Fallen Trees"> Fallen trees</label>
+                <label><input type="checkbox" class="hazard" name="hazards" value="Fallen Trees" > Fallen trees</label>
             </div>
             <div>
-                <label><input type="checkbox" name="hazards" value="Damaged Buildings"> Damaged buildings</label>
+                <label><input type="checkbox" class="hazard" name="hazards" value="Damaged Buildings" > Damaged buildings</label>
             </div>
             <div>
-                <label><input type="checkbox" name="hazards" value="Power Lines"> Power lines down</label>
+                <label><input type="checkbox" class="hazard" name="hazards" value="Power Lines" > Power lines down</label>
             </div>
             <div>
-                <label><input type="checkbox" name="hazards" value="Blocked Roads"> Blocked exits or roads</label>
+                <label><input type="checkbox" class="hazard" name="hazards" value="Blocked Roads" > Blocked exits or roads</label>
             </div>
             <div>
-                <label><input type="checkbox" name="hazards" value="Other"> Other</label>
+                <label><input type="checkbox" class="hazard" name="hazards" value="Other"> Other</label>
             </div>
         </div>
 
@@ -108,28 +104,28 @@
                 <!-- Temporary Shelter Question -->
                 <div class="section">
                     <label>Do you have a temporary shelter?</label>
-                    <input type="radio" name="shelter" value="yes"> Yes
+                    <input type="radio" name="shelter" value="yes" required > Yes
                     <input type="radio" name="shelter" value="no"> No
                 </div>
             
                 <!-- Access to Food Question -->
                 <div class="section">
                     <label>Do you have access to food?</label>
-                    <input type="radio" name="food" value="yes"> Yes
+                    <input type="radio" name="food" value="yes" required> Yes
                     <input type="radio" name="food" value="no"> No
                 </div>
             
                 <!-- Access to Water Question -->
                 <div class="section">
                     <label>Do you have access to water?</label>
-                    <input type="radio" name="water" value="yes"> Yes
+                    <input type="radio" name="water" value="yes" required> Yes
                     <input type="radio" name="water" value="no"> No
                 </div>
             
                 <!-- Access to Electricity Question -->
                 <div class="section">
                     <label>Do you have access to electricity?</label>
-                    <input type="radio" name="electricity" value="yes"> Yes
+                    <input type="radio" name="electricity" value="yes" required> Yes
                     <input type="radio" name="electricity" value="no"> No
                 </div>
             </div>
@@ -156,50 +152,54 @@
     </form>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    const map = L.map('map').setView([43.66464895584507, -79.39972218955619], 15);
-    let marker = null;
-    let manualPlacementEnabled = false;
+    document.addEventListener("DOMContentLoaded", () => {
+        const map = L.map('map').setView([43.66464895584507, -79.39972218955619], 15);
+        let marker = null;
+        let manualPlacementEnabled = false;
 
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
 
-    // Place marker at user's GPS location
-    document.getElementById("gpsButton").addEventListener("click", () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                const userLocation = [position.coords.latitude, position.coords.longitude];
-                map.setView(userLocation, 13);
+        // Place marker at user's GPS location
+        document.getElementById("gpsButton").addEventListener("click", () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const userLocation = [position.coords.latitude, position.coords.longitude];
+                    map.setView(userLocation, 13);
+                    if (marker) map.removeLayer(marker);
+                    marker = L.marker(userLocation).addTo(map).bindPopup("Your Location").openPopup();
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        });
+
+        // Enable manual placement mode
+        document.getElementById("manualButton").addEventListener("click", () => {
+            manualPlacementEnabled = true;
+            alert("Click on the map to place the marker.");
+        });
+
+        // Manual marker placement
+        map.on('click', (e) => {
+            if (manualPlacementEnabled) {
                 if (marker) map.removeLayer(marker);
-                marker = L.marker(userLocation).addTo(map).bindPopup("Your Location").openPopup();
-            });
-        } else {
-            alert("Geolocation is not supported by this browser.");
-        }
-    });
+                marker = L.marker(e.latlng).addTo(map).bindPopup("Your Selected Location").openPopup();
+                manualPlacementEnabled = false;
+            }
+        });
 
-    // Enable manual placement mode
-    document.getElementById("manualButton").addEventListener("click", () => {
-        manualPlacementEnabled = true;
-        alert("Click on the map to place the marker.");
-    });
-
-    // Manual marker placement
-    map.on('click', (e) => {
-        if (manualPlacementEnabled) {
-            if (marker) map.removeLayer(marker);
-            marker = L.marker(e.latlng).addTo(map).bindPopup("Your Selected Location").openPopup();
-            manualPlacementEnabled = false;
-        }
-    });
-
-    // Delete marker
-    document.getElementById("deleteButton").addEventListener("click", () => {
+        // Delete marker
+        document.getElementById("deleteButton").addEventListener("click", () => {
         if (marker) {
             map.removeLayer(marker);
-            marker = null;
+            marker = null; // Reset the marker variable
+        } else {
+            alert("No marker to delete.");
         }
     });
 
