@@ -141,14 +141,14 @@
             <textarea id="additionalNotes" name="additionalNotes" rows="4"></textarea>
         </div>
 
-        <!-- Verification -->
-        <div class="section">
-            <h3>Verification</h3>
-            <label for="photoVideo">Photo/Video Attached?</label>
-            <select id="photoVideo" name="photoVideo">
-                <option value="No">No</option>
-                <option value="Yes">Yes</option>
-            </select>
+        <!-- Camera Section -->
+        <div class="camera-section">
+            <h3>Photo Verification</h3>
+            <video id="video" width="640" height="480" autoplay></video>
+            <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+            <div class="camera-controls">
+                <button type="button" id="capture">Capture Photo</button>
+            </div>
         </div>
 
         <!-- Submit Button -->
@@ -201,6 +201,50 @@
             map.removeLayer(marker);
             marker = null;
         }
+    });
+
+
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureButton = document.getElementById('capture');
+
+    // Access the webcam
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            video.srcObject = stream;
+        })
+        .catch(error => {
+            console.error("Error accessing the camera:", error);
+            alert("Camera access is required to take a picture.");
+        });
+
+    // Capture photo and send it to the server
+    captureButton.addEventListener('click', () => {
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.style.display = 'block'; // Display the captured image on the page
+
+        // Convert the image to a Blob and send it to the server
+        canvas.toBlob(blob => {
+            const formData = new FormData();
+            formData.append('image', blob, 'captured_photo.png');
+
+            fetch('/save_image', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Image saved successfully!');
+                } else {
+                    alert('Error saving image.');
+                }
+            })
+            .catch(error => {
+                console.error("Error uploading the image:", error);
+            });
+        }, 'image/png');
     });
 </script>
 
