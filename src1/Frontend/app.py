@@ -12,7 +12,8 @@ def form():
     if request.method == 'POST':
         name = request.form['reporterName']
         contactInfo = request.form['contactInfo']
-        disasterType = request.form['disasterType']
+        disasterType = request.form.getall['disasterType']
+        severity = request.form['severity']
         hazards = request.form['hazards']
         casualties = request.form['casualties']
         propertyDamage = request.form['propertyDamage']
@@ -23,13 +24,13 @@ def form():
 
         #comment = request.form['comment']
 
-        fieldnames = ["name", "contactInfo", "disasterType", "hazards", "casualties", "propertyDamange", "shelter", "food", "water", "electricity"]
+        fieldnames = ["name", "contactInfo", "disasterType", "severity", "hazards", "casualties", "propertyDamange", "shelter", "food", "water", "electricity"]
 
         with open('../data/data.csv','a') as inFile:
             writer = csv.DictWriter(inFile, fieldnames=fieldnames)
 
             # writerow() will write a row in your csv file
-            writer.writerow({"name": name, "contactInfo": contactInfo, "disasterType": disasterType, "hazards": hazards, "casualties": casualties, "propertyDamange": propertyDamage, "shelter": shelter, "food": food, "water": water, "electricity": electricity})
+            writer.writerow({"name": name, "contactInfo": contactInfo, "disasterType": disasterType, "severity": severity, "hazards": hazards, "casualties": casualties, "propertyDamange": propertyDamage, "shelter": shelter, "food": food, "water": water, "electricity": electricity})
     return render_template('form.html')
 
 if __name__ == "__main__": 
