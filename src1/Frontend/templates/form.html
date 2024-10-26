@@ -4,50 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Natural Disaster Live Condition Report</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to the external CSS file -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-family: Arial, sans-serif;
+        /* Ensure the map has a height */
+        #map {
+            height: 400px; /* Adjust height as needed */
+            width: 100%; /* Ensure it takes the full width */
         }
         .form-container {
-            width: 80%;
-            max-width: 600px;
-            margin-top: 20px;
-        }
-        h2, h3 {
-            text-align: center;
-        }
-        #map {
-            height: 40vh;
-            width: 100%;
-            margin: 20px 0;
-            border: 1px solid #ccc;
-        }
-        #buttons {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        button {
-            margin: 5px;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        #deleteButton {
-            background-color: red;
+            margin: 20px;
         }
     </style>
 </head>
 <body>
 
 <div class="form-container">
-    <h2>Natural Disaster Live Condition Report Form</h2>
+    <h2>Natural Disaster Live Condition Report</h2>
     
     <!-- Map Section -->
     <div id="map"></div>
@@ -64,7 +38,6 @@
             <h3>Basic Information</h3>
             <label for="reporterName">Reporter Name:</label>
             <input type="text" id="reporterName" name="reporterName" required>
-            </div>
             <label for="contactInfo">Contact Information (Phone, Email, etc.):</label>
             <input type="text" id="contactInfo" name="contactInfo" required>
         </div>
@@ -83,42 +56,41 @@
         </div>
 
         <!-- Current Observations -->
-        <label>Visible Hazards:</label>
-            <div class="form-container">
-                <div>
-                    <label><input type="checkbox" name="hazards" value="Flooded Roads"> Flooded roads</label>
-                </div>
-                <div>
-                    <label><input type="checkbox" name="hazards" value="Fallen Trees"> Fallen trees</label>
-                </div>
-                <div>
-                    <label><input type="checkbox" name="hazards" value="Damaged Buildings"> Damaged buildings</label>
-                </div>
-                <div>
-                    <label><input type="checkbox" name="hazards" value="Power Lines"> Power lines down</label>
-                </div>
-                <div>
-                    <label><input type="checkbox" name="hazards" value="Blocked Roads"> Blocked exits or roads</label>
-                </div>
-                <div>
-                    <label><input type="checkbox" name="hazards" value="Other"> Other</label>
-                </div>
+        <div class="form-container">
+            <label>Visible Hazards:</label>
+            <div>
+                <label><input type="checkbox" name="hazards" value="Flooded Roads"> Flooded roads</label>
             </div>
-
-            <label for="casualties">Casualties or Injuries Reported?</label>
-            <select id="casualties" name="casualties">
-                <option value="No">No</option>
-                <option value="Yes">Yes</option>
-            </select>
-
-            <label for="propertyDamage">Property Damage Severity:</label>
-            <select id="propertyDamage" name="propertyDamage">
-                <option value="Minimal">Minimal</option>
-                <option value="Moderate">Moderate</option>
-                <option value="Severe">Severe</option>
-                <option value="Catastrophic">Catastrophic</option>
-            </select>
+            <div>
+                <label><input type="checkbox" name="hazards" value="Fallen Trees"> Fallen trees</label>
+            </div>
+            <div>
+                <label><input type="checkbox" name="hazards" value="Damaged Buildings"> Damaged buildings</label>
+            </div>
+            <div>
+                <label><input type="checkbox" name="hazards" value="Power Lines"> Power lines down</label>
+            </div>
+            <div>
+                <label><input type="checkbox" name="hazards" value="Blocked Roads"> Blocked exits or roads</label>
+            </div>
+            <div>
+                <label><input type="checkbox" name="hazards" value="Other"> Other</label>
+            </div>
         </div>
+
+        <label for="casualties">Casualties or Injuries Reported?</label>
+        <select id="casualties" name="casualties">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+        </select>
+
+        <label for="propertyDamage">Property Damage Severity:</label>
+        <select id="propertyDamage" name="propertyDamage">
+            <option value="Minimal">Minimal</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Severe">Severe</option>
+            <option value="Catastrophic">Catastrophic</option>
+        </select>
 
         <!-- Immediate Needs -->
         <div class="section">
@@ -153,9 +125,6 @@
                 </div>
             </div>
             
-
-        </div>
-
         <!-- Additional Notes -->
         <div class="section">
             <h3>Additional Notes or Description of Conditions</h3>
