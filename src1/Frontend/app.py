@@ -12,9 +12,9 @@ def form():
     if request.method == 'POST':
         name = request.form['reporterName']
         contactInfo = request.form['contactInfo']
-        disasterType = request.form.getall['disasterType']
+        disasterType = request.form['disasterType']
         severity = request.form['severity']
-        hazards = request.form['hazards']
+        hazards = request.form.getlist('hazards')
         casualties = request.form['casualties']
         propertyDamage = request.form['propertyDamage']
         shelter = request.form['shelter']
@@ -30,7 +30,7 @@ def form():
             writer = csv.DictWriter(inFile, fieldnames=fieldnames)
 
             # writerow() will write a row in your csv file
-            writer.writerow({"name": name, "contactInfo": contactInfo, "disasterType": disasterType, "severity": severity, "hazards": hazards, "casualties": casualties, "propertyDamange": propertyDamage, "shelter": shelter, "food": food, "water": water, "electricity": electricity})
+            writer.writerow({"name": name, "contactInfo": contactInfo, "disasterType": disasterType, "severity": severity, "hazards": ' '.join(hazards), "casualties": casualties, "propertyDamange": propertyDamage, "shelter": shelter, "food": food, "water": water, "electricity": electricity})
     return render_template('form.html')
 
 if __name__ == "__main__": 
