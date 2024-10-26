@@ -23,13 +23,13 @@ def form():
 
         #comment = request.form['comment']
 
-        fieldnames = ["name", "contactInfo", "disasterType", "hazards", "casualties", "propertyDamange", "shelter", "food", "water"]
+        fieldnames = ["name", "contactInfo", "disasterType", "hazards", "casualties", "propertyDamange", "shelter", "food", "water", "electricity"]
 
         with open('../data/data.csv','a') as inFile:
             writer = csv.DictWriter(inFile, fieldnames=fieldnames)
 
             # writerow() will write a row in your csv file
-            writer.writerow({"name": name, "contactInfo": contactInfo, "disasterType": disasterType, "hazards": hazards, "casualties": casualties, "propertyDamange": propertyDamage, "shelter": shelter, "food": food, "water": water})
+            writer.writerow({"name": name, "contactInfo": contactInfo, "disasterType": disasterType, "hazards": hazards, "casualties": casualties, "propertyDamange": propertyDamage, "shelter": shelter, "food": food, "water": water, "electricity": electricity})
     return render_template('form.html')
 
 if __name__ == "__main__": 
