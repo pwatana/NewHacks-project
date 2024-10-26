@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
-from sklearn.cluster import KMeans
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
+from sklearn.decomposition import PCA
 
 # Step 1: Define the hazard values
 hazard_values = {
@@ -17,7 +17,6 @@ def simulate_data(num_households=5):
     np.random.seed(42)
     household_names = [f'Household {i+1}' for i in range(num_households)]
 
-    # Allow multiple hazards to be selected by randomly choosing 1-3 hazards per household
     hazards = list(hazard_values.keys())
     data = {
         'Electricity': np.random.choice(['Yes', 'No'], num_households),
@@ -39,41 +38,118 @@ def simulate_data(num_households=5):
 
     return df_households
 
-# Step 3: Preprocess the data for KMeans (updated to include 'Visible Hazard' for clustering)
-def preprocess_data(df):
-    # Encode categorical columns (Yes/No) as numbers, including 'Visible Hazard' now
+# Step 3: One-Hot Encoding for Visible Hazards
+def one_hot_encode_hazards(df):
+    # One-Hot Encode hazards
+    for hazard in hazard_values.keys():
+        df[hazard] = df['Visible Hazards'].apply(lambda hazards: 1 if hazard in hazards else 0)
+
+    return df
+
+# Step 4: Feature engineering (scaling, interaction terms, damage index, etc.)
+def feature_engineer(df):
     label_encoder = LabelEncoder()
+
+    # Encode binary columns (Yes/No) as 0/1
     for column in ['Electricity', 'Water', 'Food', 'House', 'Temporary Shelter', 'Injuries']:
         df[column] = label_encoder.fit_transform(df[column])
 
-    # Drop 'Type of Disaster' and 'User\'s Contact Information', but keep 'Hazard Score'
-    df = df.drop(['User\'s Contact Information', 'Type of Disaster'], axis=1)
+    # One-Hot Encoding for visible hazards
+    df = one_hot_encode_hazards(df)
+
+    # Interaction terms between binary columns (to capture combined effects)
+    df['Electricity & Water'] = df['Electricity'] & df['Water']
+    df['Electricity & Food'] = df['Electricity'] & df['Food']
+    df['Water & Food'] = df['Water'] & df['Food']
+
+    # Composite Damage Index: Sum of all key features
+    df['Damage Index'] = df['Electricity'] + df['Water'] + df['Food'] + df['House'] + df['Temporary Shelter'] + df['Hazard Score'] + df['Scale-Severity']
+
+    # Weighted Hazard Score
+    df['Weighted Hazard Score'] = df['Hazard Score'] * df['Scale-Severity']  # Weight hazard by severity
+
+    # Binary interaction for utilities (count how many utilities are lost)
+    df['Total Utility Loss'] = df[['Electricity', 'Water', 'Food']].sum(axis=1)
+
+    # Handling outliers: Cap the Hazard Score and Scale-Severity to reasonable values
+    df['Hazard Score'] = np.clip(df['Hazard Score'], 0, 15)  # Cap Hazard Score
+    df['Scale-Severity'] = np.clip(df['Scale-Severity'], 1, 10)  # Cap Scale-Severity between 1 and 10
+
+    # Scaling numerical features using MinMaxScaler
+    scaler = MinMaxScaler()
+    df[['Hazard Score', 'Scale-Severity', 'Damage Index', 'Weighted Hazard Score']] = scaler.fit_transform(df[['Hazard Score', 'Scale-Severity', 'Damage Index', 'Weighted Hazard Score']])
+
+    # Drop irrelevant columns
+    df = df.drop(['User\'s Contact Information', 'Type of Disaster', 'Visible Hazards'], axis=1)
 
     return df
 
-# Step 4: Apply KMeans clustering
-def apply_kmeans(df, num_clusters=8):
-    # Initialize KMeans with a number of clusters
-    kmeans = KMeans(n_clusters=num_clusters, random_state=42)
+# Step 5: Apply Principal Component Analysis (PCA) for dimensionality reduction
+def apply_pca(df, n_components=2):
+    pca = PCA(n_components=n_components)
+    df_pca = pca.fit_transform(df)
 
-    # Fit the KMeans model
-    clusters = kmeans.fit_predict(df)
+    # Return the reduced PCA features as a DataFrame
+    pca_columns = [f'PC{i+1}' for i in range(n_components)]
+    df_pca = pd.DataFrame(df_pca, columns=pca_columns)
 
-    # Add the cluster assignments to the DataFrame
-    df['Cluster'] = clusters
-    return df
-
+    return df_pca
 
 # Simulate the data
 df_households = simulate_data()
 
+# Apply feature engineering (One-Hot Encoding, interaction terms, scaling, etc.)
+df_engineered = feature_engineer(df_households.copy())
 
-# Preprocess the data
-# (with 'Type of Disaster' removed and 'Hazard Score' included)
-df_preprocessed = preprocess_data(df_households.copy())
+# Apply PCA to reduce dimensionality
+df_pca = apply_pca(df_engineered)
 
-# Apply KMeans clustering
-df_clustered = apply_kmeans(df_preprocessed)
+# Display the final dataset with PCA applied
+print(df_pca)
 
-# Display the results
-print(df_clustered)
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+# Step 6: Apply KMeans Clustering
+def apply_kmeans(df, n_clusters=3):
+    # Initialize KMeans with a specified number of clusters
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+
+    # Fit KMeans on the PCA-reduced dataset
+    clusters = kmeans.fit_predict(df)
+
+    # Add the cluster labels to the DataFrame
+    df['Cluster'] = clusters
+
+    return df, kmeans
+
+# Step 7: Visualize the Clusters in 2D space
+def visualize_clusters(df_pca, kmeans):
+    plt.figure(figsize=(10, 6))
+
+    # Scatter plot of the PCA components, colored by cluster
+    plt.scatter(df_pca['PC1'], df_pca['PC2'], c=df_pca['Cluster'], cmap='viridis', s=100, alpha=0.7)
+
+    # Plot cluster centers
+    plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s=300, c='red', marker='X', label='Centroids')
+
+    plt.title('KMeans Clustering on PCA-Reduced Data')
+    plt.xlabel('Principal Component 1')
+    plt.ylabel('Principal Component 2')
+    plt.legend()
+    plt.show()
+
+# Simulate the data
+df_households = simulate_data()
+
+# Apply feature engineering (One-Hot Encoding, interaction terms, scaling, etc.)
+df_engineered = feature_engineer(df_households.copy())
+
+# Apply PCA to reduce dimensionality to 2 components
+df_pca = apply_pca(df_engineered, n_components=2)
+
+# Apply KMeans clustering on the PCA-reduced data
+df_clustered, kmeans_model = apply_kmeans(df_pca)
+
+# Visualize the clusters
+visualize_clusters(df_clustered, kmeans_model)
