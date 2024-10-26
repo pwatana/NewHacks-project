@@ -32,14 +32,16 @@ def simulate_data(num_households=5):
         'User\'s Contact Information': np.random.choice(['123-456-7890', 'example@mail.com', '456-789-0123', 'contact@domain.com', '789-012-3456'], num_households)
     }
 
-    df_households = pd.DataFrame(data, index=household_names)
+    df_house = pd.DataFrame(data, index=household_names)
 
     # Calculate the hazard score by summing the values of the selected hazards
-    df_households['Hazard Score'] = df_households['Visible Hazards'].apply(lambda hazards: sum(hazard_values[hazard] for hazard in hazards))
+    df_house['Hazard Score'] = df_house['Visible Hazards'].apply(lambda hazards: sum(hazard_values[hazard] for hazard in hazards))
 
-    return df_households
+    return df_house
 
-# Step 3: Preprocess the data for KMeans (updated to include 'Visible Hazard' for clustering)
+df_household = simulate_data()
+print(df_household)
+
 def preprocess_data(df):
     # Encode categorical columns (Yes/No) as numbers, including 'Visible Hazard' now
     label_encoder = LabelEncoder()
@@ -47,11 +49,13 @@ def preprocess_data(df):
         df[column] = label_encoder.fit_transform(df[column])
 
     # Drop 'Type of Disaster' and 'User\'s Contact Information', but keep 'Hazard Score'
-    df = df.drop(['User\'s Contact Information', 'Type of Disaster'], axis=1)
+    df = df.drop(['User\'s Contact Information', 'Type of Disaster', 'Visible Hazards'], axis=1)
 
     return df
 
-# Step 4: Apply KMeans clustering
+df_preprocessed = preprocess_data(df_household)
+print(df_preprocessed)
+
 def apply_kmeans(df, num_clusters=8):
     # Initialize KMeans with a number of clusters
     kmeans = KMeans(n_clusters=num_clusters, random_state=42)
@@ -63,17 +67,5 @@ def apply_kmeans(df, num_clusters=8):
     df['Cluster'] = clusters
     return df
 
-
-# Simulate the data
-df_households = simulate_data()
-
-
-# Preprocess the data
-# (with 'Type of Disaster' removed and 'Hazard Score' included)
-df_preprocessed = preprocess_data(df_households.copy())
-
-# Apply KMeans clustering
-df_clustered = apply_kmeans(df_preprocessed)
-
-# Display the results
-print(df_clustered)
+df_kmeans = apply_kmeans(df_preprocessed)
+print(df_kmeans)
