@@ -59,7 +59,7 @@ def setup_bayesian_network(neighbors):
 
     # Internal household dependencies (same as before)
     for household in neighbors.keys():
-        edges.extend([(f'{household}_Electricity', f'{household}_House'),
+        edges.extend([(f'{household}_Electricity', f'{household}_Hou'),
                       (f'{household}_Water', f'{household}_House'),
                       (f'{household}_Food', f'{household}_House'),
                       (f'{household}_House', f'{household}_Temporary_Shelter'),
@@ -118,40 +118,38 @@ print(df_households.dtypes)
 print(learn_cpts(model, df_reorganized))
 
 
-# # Step 5: Perform inference to predict missing values for a household
-# def perform_inference(model, df, household_node):
-#     inference = VariableElimination(model)
-#
-#     # Get neighbors for the specified household
-#     neighbors_list = neighbors[household_node]
-#
-#     # Select evidence based on neighbors' 'House' values from the dataframe
-#     evidence = {}
-#     for neighbor in neighbors_list:
-#         evidence[neighbor] = df.loc[neighbor, 'House']  # Use household name as key
-#
-#     # Predict missing values for the 'House' attribute of the specified household
-#     result = inference.query(variables=['House'], evidence=evidence)
-#
-#     print(result)
-#
-# # Example of how to implement the interpolation process
-# df_households = simulate_data_with_missing(10)
-#
-# # Encode categorical variables into numerical format
-# label_encoder = LabelEncoder()
-#
-# for column in ['Electricity', 'Water', 'Food', 'House', 'Temporary Shelter', 'Injuries']:
-#     df_households[column] = label_encoder.fit_transform(df_households[column].astype(str))
-#
-# neighbors = find_neighbors(df_households, max_distance=3)
-#
-# # Setup Bayesian network with household names
-# model = setup_bayesian_network(neighbors)
-# model = learn_cpts(model, df_households)
-#
-# # Perform inference for a specific household node, e.g., 'Household 1'
-# perform_inference(model, df_households, household_node='Household 1')
+# Step 5: Perform inference to predict missing values for a household
+def perform_inference(model, df, household_node):
+    inference = VariableElimination(model)
+
+    # Get neighbors for the specified household
+    neighbors_list = neighbors[household_node]
+
+    # Select evidence based on neighbors' 'House' values from the dataframe
+    evidence = {}
+    for neighbor in neighbors_list:
+        evidence[neighbor] = df.loc[neighbor, 'House']  # Use household name as key
+
+    # Predict missing values for the 'House' attribute of the specified household
+    result = inference.query(variables=['House'], evidence=evidence)
+
+    print(result)
+
+
+# Encode categorical variables into numerical format
+label_encoder = LabelEncoder()
+
+for column in ['Electricity', 'Water', 'Food', 'House', 'Temporary Shelter', 'Injuries']:
+    df_households[column] = label_encoder.fit_transform(df_households[column].astype(str))
+
+neighbors = find_neighbors(df_households, max_distance=3)
+
+# Setup Bayesian network with household names
+model = setup_bayesian_network(neighbors)
+model = learn_cpts(model, df_households)
+
+# Perform inference for a specific household node, e.g., 'Household 1'
+perform_inference(model, df_households, household_node='Household 1')
 
 
 
