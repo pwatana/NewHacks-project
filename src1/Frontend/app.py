@@ -17,7 +17,6 @@ def form():
         severity = request.form['severity']
         hazards = request.form.getlist('hazards')
         casualties = request.form['casualties']
-        propertyDamage = request.form['propertyDamage']
         shelter = request.form['shelter']
         food = request.form['food']
         water = request.form['water']
@@ -26,8 +25,9 @@ def form():
         longitude = request.form['longitude']
 
         numberinput = request.form['numberinput']
+        house = request.form['house']
 
-        fieldnames = ["name", "contactInfo", "disasterType", "severity", "hazards", "casualties", "propertyDamage", "shelter", "food", "water", "electricity", "numberinput", "location"]
+        fieldnames = ["name", "contactInfo", "disasterType", "severity", "hazards", "casualties", "shelter", "food", "water", "electricity", "numberinput", "house", "location"]
 
         with open('../data/data.csv','a') as inFile:
             writer = csv.DictWriter(inFile, fieldnames=fieldnames)
@@ -36,9 +36,8 @@ def form():
             writer.writerow({"name": name, "contactInfo": contactInfo,
                             "disasterType": disasterType, "severity": severity, 
                             "hazards": hazards, "casualties": casualties, 
-                            "propertyDamage": propertyDamage, 
                             "shelter": shelter, "food": food, "water": water, 
-                            "electricity": electricity, "numberinput":numberinput,
+                            "electricity": electricity, "numberinput":numberinput, "house": house,
                             "location": (latitude, longitude)})
     return render_template('form.html')
 
@@ -50,7 +49,7 @@ def save_image():
     image = request.files['image']
     numbers = []
     for filename in os.listdir("../data/images"):
-        int(filename.split('.')[0])
+        numbers.append(int(filename.split('.')[0]))
     next_number = max(numbers) + 1 if numbers else 1
     image.save("../data/images/" + str(next_number) + ".png")  # Save the image to the photos folder
     print("Saved!")
