@@ -141,6 +141,7 @@ def perform_inference(model, df, household_node):
 
     print(result)
 
+
 # Perform inference for a specific household node, e.g., 'Household 1'
 perform_inference(model, df_reorganized, household_node='Household 1')
 
