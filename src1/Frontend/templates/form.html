@@ -17,24 +17,23 @@
         }
     </style>
 </head>
-<body>
 
+<body>
 <div class="form-container">
     <h2>Natural Disaster Live Condition Report</h2>
     
     <!-- Map Section -->
     <div id="map"></div>
     <div id="buttons">
-        <button id="gpsButton">Place Marker at My Location</button>
-        <button id="manualButton">Enable Manual Placement</button>
-        <button id="deleteButton">Delete Marker</button>
+        <button id="gpsButton" class="btn">Place Marker at My Location</button>
+        <button id="manualButton" class="btn">Enable Manual Placement</button>
+        <button id="deleteButton" class="btn">Delete Marker</button>
     </div>
 
     <!-- Form Section -->
     <form id="disasterForm" action="#" method="post">
         <!-- Basic Information -->
         <div class="section">
-            <h3>Basic Information</h3>
             <label for="reporterName">Reporter Name:</label>
             <input type="text" id="reporterName" name="reporterName" required>
             <label for="contactInfo">Contact Information (Phone, Email, etc.):</label>
@@ -44,15 +43,32 @@
         <!-- Disaster Type -->
         <div class="section">
             <h3>Disaster Type</h3>
-            <label><input type="radio" name="disasterType" value="Earthquake" required> Earthquake</label>
-            <label><input type="radio" name="disasterType" value="Flood"> Flood</label>
-            <label><input type="radio" name="disasterType" value="Wildfire"> Wildfire</label>
-            <label><input type="radio" name="disasterType" value="Hurricane"> Hurricane/Typhoon</label>
-            <label><input type="radio" name="disasterType" value="Tornado"> Tornado</label>
-            <label><input type="radio" name="disasterType" value="Landslide"> Landslide</label>
-            <label><input type="radio" name="disasterType" value="Volcano"> Volcanic Eruption</label>
-            <label><input type="radio" name="disasterType" value="Other"> Other</label>
+            <div class="radio-container">
+                <label><input type="radio" name="disasterType" value="Earthquake" required> Earthquake</label>
+            </div>
+            <div class="radio-container">
+                <label><input type="radio" name="disasterType" value="Flood"> Flood</label>
+            </div>
+            <div class="radio-container">
+                <label><input type="radio" name="disasterType" value="Wildfire"> Wildfire</label>
+            </div>
+            <div class="radio-container">
+                <label><input type="radio" name="disasterType" value="Hurricane"> Hurricane/Typhoon</label>
+            </div>
+            <div class="radio-container">
+                <label><input type="radio" name="disasterType" value="Tornado"> Tornado</label>
+            </div>
+            <div class="radio-container">
+                <label><input type="radio" name="disasterType" value="Landslide"> Landslide</label>
+            </div>
+            <div class="radio-container">
+                <label><input type="radio" name="disasterType" value="Volcano"> Volcanic Eruption</label>
+            </div>
+            <div class="radio-container">
+                <label><input type="radio" name="disasterType" value="Other"> Other</label>
+            </div>
         </div>
+        
 
         <!-- Current Observations -->
         <div class="section">
@@ -84,19 +100,20 @@
         </div>
 
         <label for="casualties">Casualties or Injuries Reported?</label>
-        <select id="casualties" name="casualties">
+        <select id="casualties" name="casualties" style="width: 75px;" onchange="toggleCasualtyInput()">
             <option value="No">No</option>
             <option value="Yes">Yes</option>
         </select>
 
-        <label for="number of people">Number of people with you</label>
-        <input type="number" id="numberinput" name="numberinput" min = 0>
-        
+        <div id="casualtyCountContainer" style="display: none;">
+            <label for="casualtyCount">Please specify how many people:</label>
+            <input type="number" id="casualtyCount" name="casualtyCount" min="0" style="width: 100px;">
+        </div>
 
         <!-- Immediate Needs -->
         <div class="section">
             <h3>Immediate Needs</h3>
-            <div class="form-container">
+
                 <!-- Temporary Shelter Question -->
                 <div class="section">
                     <label>Do you have a house?</label>
@@ -144,7 +161,7 @@
             <video id="video" width="640" height="480" autoplay></video>
             <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
             <div class="camera-controls">
-                <button type="button" id="capture">Capture Photo</button>
+                <button type="button" class="btn" id="capture">Capture Photo</button>
             </div>
         </div>
 
@@ -157,6 +174,16 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+    function toggleCasualtyInput() {
+    const casualtySelect = document.getElementById('casualties');
+    const casualtyCountContainer = document.getElementById('casualtyCountContainer');
+
+    if (casualtySelect.value === 'Yes') {
+        casualtyCountContainer.style.display = 'block';
+    } else {
+        casualtyCountContainer.style.display = 'none';
+    }
+}
     document.addEventListener("DOMContentLoaded", () => {
         const map = L.map('map').setView([43.66464895584507, -79.39972218955619], 15);
         document.getElementById("latitude").value = 43.66464895584507;
@@ -257,6 +284,5 @@
     })
 });
 </script>
-    
 </body>
 </html>
