@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natural Disaster Live Condition Report</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h2>Natural Disaster Live Condition Report</h2>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Initialize the map with a default view
+            const map = L.map('map').setView([43.6646, -79.3997], 5);
+
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Fetch location data from Flask backend
+            fetch('/locations')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(location => {
+                        const { name, disasterType, latitude, longitude } = location;
+                        // Create a marker and bind a popup with the name and disaster type
+                        L.marker([latitude, longitude]).addTo(map)
+                            .bindPopup(`<strong>${name}</strong><br>Type: ${disasterType}`);
+                    });
+                })
+                .catch(error => console.error('Error fetching location data:', error));
+        });
+    </script>
+</body>
+</html>
