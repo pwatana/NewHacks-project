@@ -25,19 +25,20 @@ def form():
         latitude = request.form['latitude']
         longitude = request.form['longitude']
 
-        #comment = request.form['comment']
+        numberinput = request.form['numberinput']
 
-        fieldnames = ["name", "contactInfo", "disasterType", "severity", "hazards", "casualties", "propertyDamange", "shelter", "food", "water", "electricity", "location"]
+        fieldnames = ["name", "contactInfo", "disasterType", "severity", "hazards", "casualties", "propertyDamage", "shelter", "food", "water", "electricity", "numberinput", "location"]
 
         with open('../data/data.csv','a') as inFile:
             writer = csv.DictWriter(inFile, fieldnames=fieldnames)
 
             # writerow() will write a row in your csv file
-            writer.writerow({"name": name, "contactInfo": contactInfo, 
-                             "disasterType": disasterType, "severity": severity,
+            writer.writerow({"name": name, "contactInfo": contactInfo,
+                            "disasterType": disasterType, "severity": severity, 
                             "hazards": hazards, "casualties": casualties, 
-                            "propertyDamange": propertyDamage, "shelter": shelter,
-                            "food": food, "water": water, "electricity": electricity,
+                            "propertyDamage": propertyDamage, 
+                            "shelter": shelter, "food": food, "water": water, 
+                            "electricity": electricity, "numberinput":numberinput,
                             "location": (latitude, longitude)})
     return render_template('form.html')
 
