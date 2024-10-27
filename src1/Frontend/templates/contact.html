@@ -75,80 +75,108 @@
       margin: 0 10px;
       font-size: 24px;
     }
+    .u-section-5 {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.bg-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -1;
+    transform: translate(-50%, -50%);
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Black background with 50% opacity */
+    z-index: 1; /* Place the overlay above the video */
+}
+
+.contact-info {
+    position: relative; 
+    z-index: 2; /* Ensure the contact info is in front of the overlay */
+    text-align: center;
+    color: #fff; /* Change color for better visibility */
+}
+.card {
+    border: none; /* Remove card border */
+    background-color: rgba(0, 0, 0, 0.8); /* Slightly transparent card */
+}
+
+  </style>
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+      body {
+          font-family: 'Roboto', sans-serif;
+      }
   </style>
 </head>
-<body>
-  <body class="u-body u-xl-mode">
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">RescueRadar</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                  <li class="nav-item">
-                      <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/form">Report</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/results">Insights</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contact">Contact</a>
-                    </li>
-                </ul>
-            </div>
+
+<body class="u-body u-xl-mode">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">RescueRadar</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                  <a class="nav-link" href="/">Home</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="/form">Report</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="/results">Insights</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="/contact">Contact</a>
+              </li>
+            </ul>
         </div>
-    </nav>
-  
-    <style>
-        /* Custom styles for the navbar */
-        .navbar {
-            background-color: #2c3e50; /* Dark background */
-            border-bottom: 2px solid teal; /* Accent color */
-        }
-        .navbar-brand {
-            font-family: 'Georgia', serif; /* Elegant font */
-            font-size: 1.8rem; /* Larger brand font size */
-            color: white; /* Accent color */
-        }
-        .nav-link {
-            font-family: 'Open Sans', sans-serif; /* Clean, modern font */
-            color: #ecf0f1; /* Light color for text */
-            transition: color 0.3s; /* Smooth color transition */
-        }
-        .nav-link:hover {
-            color: teal; /* Change to accent color on hover */
-        }
-        .navbar-toggler {
-            border-color: teal; /* Toggler border color */
-        }
-        .navbar-toggler-icon {
-            background-image: url('data:image/svg+xml;charset=utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="%23e67e22" viewBox="0 0 30 30"%3E%3Cpath stroke="none" d="M0 5h30v5H0zm0 10h30v5H0zm0 10h30v5H0z"/%3E%3C/svg%3E'); /* Custom color for toggler icon */
-        }
-    </style>
-
-<div class="container">
-  <h2>Contact Us</h2>
-
-  <h3>gerardus.effrien@mail.utoronto.ca</h3>
-  <h3>daniel.halpern@mail.utoronto.ca</h3>
-  <h3>nikita.nathania@mail.utoronto.ca</h3>
-  <h3>patricia.watanabe@mail.utronto.ca</h3>
-
-  <div class="contact-info">
-    <p>Email: contact@yourwebsite.com</p>
-    <p>Phone: (123) 456-7890</p>
-    <div class="social-icons">
-      <a href="#" target="_blank">Facebook</a>
-      <a href="#" target="_blank">Twitter</a>
-      <a href="#" target="_blank">LinkedIn</a>
     </div>
-  </div>
-</div>
+</nav>
 
+<section class="u-section-5 u-align-center" id="carousel_b06a">
+  <video autoplay muted loop class="bg-video">
+      <source src="../static/radar.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+  </video>
+  <div class="overlay"></div>
+  
+  <div class="container" style="position: relative; z-index: 2; max-width: 600px; margin: 0 auto;">
+      <div class="card bg-dark text-white">
+          <div class="card-body text-center">
+              <h2 class="card-title">Contact Us</h2>
+              <h5>gerardus.effrien@mail.utoronto.ca</h5>
+              <h5>daniel.halpern@mail.utoronto.ca</h5>
+              <h5>nikita.rudy@mail.utoronto.ca</h5>
+              <h5>patricia.watanabe@mail.utoronto.ca</h5>
+              <p>Email: contact@yourwebsite.com</p>
+              <p>Phone: (123) 456-7890</p>
+              <div class="social-icons">
+                <a href="#" target="_blank" class="text-white">Facebook</a>
+                <a href="#" target="_blank" class="text-white">Twitter</a>
+                <a href="#" target="_blank" class="text-white">LinkedIn</a>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
 </body>
-</html>
