@@ -22,16 +22,15 @@ def form():
         food = request.form['food']
         water = request.form['water']
         electricity = request.form['electricity']
+        numberinput = request.form['numberinput']
 
-        #comment = request.form['comment']
-
-        fieldnames = ["name", "contactInfo", "disasterType", "severity", "hazards", "casualties", "propertyDamange", "shelter", "food", "water", "electricity"]
+        fieldnames = ["name", "contactInfo", "disasterType", "severity", "hazards", "casualties", "propertyDamage", "shelter", "food", "water", "electricity", "numberinput"]
 
         with open('../data/data.csv','a') as inFile:
             writer = csv.DictWriter(inFile, fieldnames=fieldnames)
 
             # writerow() will write a row in your csv file
-            writer.writerow({"name": name, "contactInfo": contactInfo, "disasterType": disasterType, "severity": severity, "hazards": hazards, "casualties": casualties, "propertyDamange": propertyDamage, "shelter": shelter, "food": food, "water": water, "electricity": electricity})
+            writer.writerow({"name": name, "contactInfo": contactInfo, "disasterType": disasterType, "severity": severity, "hazards": hazards, "casualties": casualties, "numberinput":numberinput,"propertyDamage": propertyDamage, "shelter": shelter, "food": food, "water": water, "electricity": electricity})
     return render_template('form.html')
 
 @app.route('/save_image', methods=['POST'])
