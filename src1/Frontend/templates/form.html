@@ -147,6 +147,8 @@
             </div>
         </div>
 
+        <input type="hidden" id="latitude" name="latitude">
+        <input type="hidden" id="longitude" name="longitude">
         <!-- Submit Button -->
         <button type="submit" class="submit-button">Submit Report</button>
     </form>
@@ -156,6 +158,8 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const map = L.map('map').setView([43.66464895584507, -79.39972218955619], 15);
+        document.getElementById("latitude").value = 43.66464895584507;
+        document.getElementById("longitude").value = -79.39972218955619;
         let marker = null;
         let manualPlacementEnabled = false;
 
@@ -172,6 +176,8 @@
                     map.setView(userLocation, 13);
                     if (marker) map.removeLayer(marker);
                     marker = L.marker(userLocation).addTo(map).bindPopup("Your Location").openPopup();
+                    document.getElementById("latitude").value = position.coords.latitude;
+                    document.getElementById("longitude").value = position.coords.longitude;
                 });
             } else {
                 alert("Geolocation is not supported by this browser.");
@@ -190,6 +196,8 @@
                 if (marker) map.removeLayer(marker);
                 marker = L.marker(e.latlng).addTo(map).bindPopup("Your Selected Location").openPopup();
                 manualPlacementEnabled = false;
+                document.getElementById("latitude").value = e.latlng.lat;
+                document.getElementById("longitude").value = e.latlng.lng;
             }
         });
 
