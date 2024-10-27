@@ -12,19 +12,82 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Open+Sans:300,400,500,600,700,800">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900">
     <meta name="theme-color" content="#478ac9">
+    <style>
+        /* General Body Styling */
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+        }
+        /* Header Styling */
+        .u-header {
+            background-color: #333;
+            padding: 10px 0;
+            text-align: center;
+        }
+        /* Section Styling */
+        .u-section-1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #ffffff;
+            background-size: cover;
+            background-position: center;
+            background-image: url('../static/elephant.jpg');
+        }
+        /* Text and Button Styling */
+        h1.u-text-1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: #fff;
+        }
+        h2.u-text-2 {
+            font-size: 1.5rem;
+            margin: 15px 0;
+            color: #ddd;
+        }
+        .u-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #478ac9;
+            color: #fff;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease;
+        }
+        .u-btn:hover {
+            background-color: #376a97;
+        }
+        /* Responsive Image Scaling */
+        @media (max-width: 768px) {
+            h1.u-text-1 {
+                font-size: 2rem;
+            }
+            h2.u-text-2 {
+                font-size: 1.2rem;
+            }
+            .u-section-1 {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 
 <body class="u-body u-xl-mode" data-home-page="Home.html" data-home-page-title="Home">
     <header class="u-header" id="sec-3dd2">
-        <div class="u-sheet u-valign-middle"></div>
+        <div class="u-sheet u-valign-middle">
+            <h1>Disaster Alert</h1>
+        </div>
     </header>
 
-    <section class="u-section-1 u-image u-align-center" id="carousel_b06a" style="background-image: url('../static/elephant.jpg'); background-position: center;">
-      <div class="u-sheet u-valign-bottom-xs" style="text-align: center;">
-          <h1 class="u-custom-font u-font-lato u-text-white u-text u-text-1">YOUR MOST UPDATED DISASTER ALERT</h1>
-          <h2 class="u-custom-font u-font-comfortaa u-text u-text-body-alt-color">Report something?</h2>
-          <a href="/form" class="u-btn u-button-style u-border-none" style="margin: auto;">CREATE A LIVE REPORT</a>
-      </div>
+    <section class="u-section-1 u-align-center" id="carousel_b06a">
+        <div class="u-sheet u-valign-middle" style="text-align: center;">
+            <h1 class="u-custom-font u-font-lato u-text u-text-1">YOUR MOST UPDATED DISASTER ALERT</h1>
+            <h2 class="u-custom-font u-font-comfortaa u-text u-text-2">Report something?</h2>
+            <a href="/form" class="u-btn u-button-style u-border-none">CREATE A LIVE REPORT</a>
+        </div>
     </section>
 
     <section class="u-section-2" id="sec-a102">
