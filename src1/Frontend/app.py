@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, jsonify
 import csv
 import os
 import pandas as pd
-import BayesianNetwork2
 
 
 app = Flask(__name__)
@@ -64,93 +63,39 @@ def save_image():
 
 @app.route('/locations')
 def locations():
-    # # Load the CSV data
-    # df = pd.read_csv('../data/data.csv')
-    #
-    # # Extract latitude and longitude from the location tuple string
-    # locations = []
-    # for _, row in df.iterrows():
-    #     location = row['location'].strip("()")  # Remove parentheses
-    #     latitude, longitude = map(float, location.split(", "))  # Split by comma and space, and convert to floats
-    #     locations.append({
-    #         "name": row['name'],
-    #         "contactInfo":row['contactInfo'],
-    #         "disasterType": row['disasterType'],
-    #         "latitude": latitude,
-    #         "longitude": longitude
-    #     })
-    #
-    # # Load the CSV data
-    # df2 = pd.read_csv('../data/data2.csv')
-    #
-    # # Extract latitude and longitude from the location tuple string
-    # locations2 = []
-    # for _, row in df2.iterrows():
-    #     location2 = row['location'].strip("()")  # Remove parentheses
-    #     latitude2, longitude2 = map(float, location2.split(", "))  # Split by comma and space, and convert to floats
-    #     locations2.append({
-    #         "name": row['name'],
-    #         "contactInfo":row['contactInfo'],
-    #         "disasterType": row['disasterType'],
-    #         "latitude": latitude2,
-    #         "longitude": longitude2
-    #     })
+    # Load the CSV data
+    df = pd.read_csv('../data/data.csv')
 
-    # Manually define data for 10 households, ensuring they are close in terms of latitude/longitude
-    data = {
-        'Electricity': ['Yes', 'No', 'Yes', 'Yes', 'No', 'No', 'Yes', 'No', 'Yes', 'Yes'],
-        'Water': ['Yes', 'Yes', 'No', 'Yes', 'No', 'Yes', 'Yes', 'No', 'No', 'Yes'],
-        'Food': ['No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'No', 'Yes', 'Yes'],
-        'Scale-Severity': [5, 3, 8, 2, 7, 9, 4, 6, 10, 1],
-        'House': ['Yes', 'Yes', 'No', 'No', 'Yes', 'No', 'Yes', 'No', 'Yes', 'Yes'],
-        'Temporary Shelter': ['No', 'Yes', 'Yes', 'No', 'Yes', 'Yes', 'No', 'No', 'Yes', 'No'],
-        'Injuries': ['No', 'Yes', 'No', 'No', 'Yes', 'Yes', 'No', 'No', 'Yes', 'No'],
-        'Latitude': [40.001, 40.002, 40.003, 40.004, 40.005, 40.0015, 40.0025, 40.0035, 40.0045, 40.0055],
-        'Longitude': [-75.001, -75.002, -75.003, -75.004, -75.005, -75.0015, -75.0025, -75.0035, -75.0045, -75.0055]
-    }
+    # Extract latitude and longitude from the location tuple string
+    locations = []
+    for _, row in df.iterrows():
+        location = row['location'].strip("()")  # Remove parentheses
+        latitude, longitude = map(float, location.split(", "))  # Split by comma and space, and convert to floats
+        locations.append({
+            "name": row['name'],
+            "contactInfo":row['contactInfo'],
+            "disasterType": row['disasterType'],
+            "latitude": latitude,
+            "longitude": longitude
+        })
 
-    # Create a DataFrame
-    df_households = pd.DataFrame(data, index=[f'Household {i+1}' for i in range(10)])
+    # Load the CSV data
+    df2 = pd.read_csv('../data/data2.csv')
 
-    # Drop any columns not required for the Bayesian Network edges
-    # Keep only Electricity, Water, Food, Scale-Severity, House, Temporary Shelter, Injuries, Latitude, and Longitude
-    columns_to_keep = ['Electricity', 'Water', 'Food', 'Scale-Severity', 'House', 'Temporary Shelter', 'Injuries', 'Latitude', 'Longitude']
-    df_households = df_households[columns_to_keep]
+    # Extract latitude and longitude from the location tuple string
+    locations2 = []
+    for _, row in df2.iterrows():
+        location2 = row['location'].strip("()")  # Remove parentheses
+        latitude2, longitude2 = map(float, location2.split(", "))  # Split by comma and space, and convert to floats
+        locations2.append({
+            "name": row['name'],
+            "contactInfo":row['contactInfo'],
+            "disasterType": row['disasterType'],
+            "latitude": latitude2,
+            "longitude": longitude2
+        })
 
-    # Print the cleaned DataFrame
-    print("Cleaned DataFrame:")
-    print(df_households)
-
-    # Step 1: Initialize an empty DataFrame
-    df_reorganized = pd.DataFrame()
-
-    # List of attributes to transform
-    attributes = ['Electricity', 'Water', 'Food', 'House', 'Temporary Shelter', 'Injuries']
-
-    # Step 2: Iterate over each household and each attribute and fill the reorganized DataFrame
-    for household in df_households.index:
-        for attribute in attributes:
-            column_name = f"{household}_{attribute.replace(' ', '_')}"  # e.g., Household_1_Electricity
-            # Assign the value for this household and attribute into the new DataFrame
-            df_reorganized[column_name] = [df_households.loc[household, attribute]]
-
-    # Step 3: For numerical values, handle them similarly (like Scale-Severity, Latitude, Longitude)
-    numerical_attributes = ['Scale-Severity', 'Latitude', 'Longitude']
-
-    for household in df_households.index:
-        for attribute in numerical_attributes:
-            column_name = f"{household}_{attribute.replace(' ', '_')}"
-            # Assign the value for this household and numerical attribute into the new DataFrame
-            df_reorganized[column_name] = [df_households.loc[household, attribute]]
-
-    # Check the final DataFrame to ensure everything is properly organized
-    print(df_reorganized)
-
-    neighbors = BayesianNetwork2.find_neighbors(df_households, max_distance=2)
-    model = BayesianNetwork2.setup_bayesian_network(neighbors)
-    output = BayesianNetwork2.perform_inference(model, df_reorganized, household_node='Household 1')
-
-    return output  # Send JSON data to the frontend
+    return jsonify({"locations1": locations, "locations2": locations2})  # Send JSON data to the frontend
 
 @app.route('/contact')
 def contact():

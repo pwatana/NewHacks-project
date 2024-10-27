@@ -1,7 +1,5 @@
 import pandas as pd
-import numpy as np
 from math import radians, sin, cos, sqrt, atan2
-from sklearn.preprocessing import LabelEncoder
 from pgmpy.models import BayesianNetwork
 from pgmpy.factors.discrete import TabularCPD
 from pgmpy.inference import VariableElimination
