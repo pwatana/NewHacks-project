@@ -35,45 +35,27 @@ data = {
 df_households = pd.DataFrame(data, index=[f'Household {i+1}' for i in range(10)])
 
 # Drop any columns not required for the Bayesian Network edges
-# Keep only Electricity, Water, Food, Scale-Severity, House, Temporary Shelter, Injuries, Latitude, and Longitude
 columns_to_keep = ['Electricity', 'Water', 'Food', 'Scale-Severity', 'House', 'Temporary Shelter', 'Injuries', 'Latitude', 'Longitude']
 df_households = df_households[columns_to_keep]
 
-# Print the cleaned DataFrame
-print("Cleaned DataFrame:")
-print(df_households)
-
-# Step 1: Initialize an empty DataFrame
+# Step 1: Reorganize the DataFrame to map edges (e.g., 'Household_1_Electricity')
 df_reorganized = pd.DataFrame()
 
-# List of attributes to transform
+# Attributes for the network
 attributes = ['Electricity', 'Water', 'Food', 'House', 'Temporary Shelter', 'Injuries']
-
-# Step 2: Iterate over each household and each attribute and fill the reorganized DataFrame
-for household in df_households.index:
-    for attribute in attributes:
-        column_name = f"{household}_{attribute.replace(' ', '_')}"  # e.g., Household_1_Electricity
-        # Assign the value for this household and attribute into the new DataFrame
-        df_reorganized[column_name] = [df_households.loc[household, attribute]]
-
-# Step 3: For numerical values, handle them similarly (like Scale-Severity, Latitude, Longitude)
 numerical_attributes = ['Scale-Severity', 'Latitude', 'Longitude']
 
+# Populate the reorganized DataFrame with both categorical and numerical values
 for household in df_households.index:
-    for attribute in numerical_attributes:
-        column_name = f"{household}_{attribute.replace(' ', '_')}"
-        # Assign the value for this household and numerical attribute into the new DataFrame
-        df_reorganized[column_name] = [df_households.loc[household, attribute]]
-
-# Check the final DataFrame to ensure everything is properly organized
-print(df_reorganized)
-
+    for attribute in attributes + numerical_attributes:
+        column_name = f"{household.replace(' ', '_')}_{attribute.replace(' ', '_')}"
+        df_reorganized[column_name] = [df_households.loc[household, attribute]] * len(df_households)
 
 # Step 2: Find neighbors within a 2km radius
 def find_neighbors(df, max_distance=2):
     neighbors = {}
     for i, row1 in df.iterrows():
-        neighbors[row1.name] = []  # Use household names as keys
+        neighbors[row1.name] = []
         for j, row2 in df.iterrows():
             if i != j:
                 dist = haversine(row1['Longitude'], row1['Latitude'], row2['Longitude'], row2['Latitude'])
@@ -81,9 +63,8 @@ def find_neighbors(df, max_distance=2):
                     neighbors[row1.name].append(row2.name)
     return neighbors
 
-neighbors = find_neighbors(df_households, max_distance=2)
+neighbors = find_neighbors(df_households)
 
-# Step 3: Setup Bayesian Network
 # Step 3: Setup Bayesian Network
 def setup_bayesian_network(neighbors):
     edges = []
@@ -103,11 +84,7 @@ def setup_bayesian_network(neighbors):
                 edges.append((f'{household}_Electricity', f'{neighbor}_Electricity'))
                 edges.append((f'{household}_Water', f'{neighbor}_Water'))
                 edges.append((f'{household}_Food', f'{neighbor}_Food'))
-                edges.append((f'{household}_House', f'{neighbor}_House'))
-                edges.append((f'{household}_Injuries', f'{neighbor}_Injuries'))
-                edges.append((f'{household}_Temporary_Shelter', f'{neighbor}_Temporary_Shelter'))
 
-    # Create the Bayesian Network with the defined edges
     model = BayesianNetwork(edges)
     return model
 
@@ -115,8 +92,6 @@ model = setup_bayesian_network(neighbors)
 
 # Step 4: Learn CPTs from the observed data using Maximum Likelihood Estimation
 def learn_cpts(model, df):
-
-    # Learn CPTs using Maximum Likelihood Estimation
     model.fit(df, estimator=MaximumLikelihoodEstimator)
     return model
 
@@ -132,15 +107,15 @@ def perform_inference(model, df, household_node):
     # Select evidence based on neighbors' 'House' values
     evidence = {}
     for neighbor in neighbors_list:
-        evidence[neighbor] = df.loc[neighbor, 'House']
+        evidence[f'{neighbor}_House'] = df.loc[neighbor, f'{neighbor}_House']
 
     # Predict missing values for the 'House' attribute of the specified household
-    result = inference.query(variables=['House'], evidence=evidence)
+    result = inference.query(variables=[f'{household_node}_House'], evidence=evidence)
 
     print(result)
 
 # Perform inference for a specific household node, e.g., 'Household 1'
-perform_inference(model, df_households, household_node='Household 1')
+perform_inference(model, df_reorganized, household_node='Household_1')
 
 # Print the final dataframe
-print(df_households)
+print(df_reorganized)
