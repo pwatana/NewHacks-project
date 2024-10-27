@@ -18,7 +18,6 @@ def haversine(lon1, lat1, lon2, lat2):
     distance = R * c
     return distance
 
-
 # Manually define data for 10 households, ensuring they are close in terms of latitude/longitude
 data = {
     'Electricity': ['Yes', 'No', 'Yes', 'Yes', 'No', 'No', 'Yes', 'No', 'Yes', 'Yes'],
@@ -35,6 +34,41 @@ data = {
 # Create a DataFrame
 df_households = pd.DataFrame(data, index=[f'Household {i+1}' for i in range(10)])
 
+# Drop any columns not required for the Bayesian Network edges
+# Keep only Electricity, Water, Food, Scale-Severity, House, Temporary Shelter, Injuries, Latitude, and Longitude
+columns_to_keep = ['Electricity', 'Water', 'Food', 'Scale-Severity', 'House', 'Temporary Shelter', 'Injuries', 'Latitude', 'Longitude']
+df_households = df_households[columns_to_keep]
+
+# Print the cleaned DataFrame
+print("Cleaned DataFrame:")
+print(df_households)
+
+# Step 1: Initialize an empty DataFrame
+df_reorganized = pd.DataFrame()
+
+# List of attributes to transform
+attributes = ['Electricity', 'Water', 'Food', 'House', 'Temporary Shelter', 'Injuries']
+
+# Step 2: Iterate over each household and each attribute and fill the reorganized DataFrame
+for household in df_households.index:
+    for attribute in attributes:
+        column_name = f"{household}_{attribute.replace(' ', '_')}"  # e.g., Household_1_Electricity
+        # Assign the value for this household and attribute into the new DataFrame
+        df_reorganized[column_name] = [df_households.loc[household, attribute]]
+
+# Step 3: For numerical values, handle them similarly (like Scale-Severity, Latitude, Longitude)
+numerical_attributes = ['Scale-Severity', 'Latitude', 'Longitude']
+
+for household in df_households.index:
+    for attribute in numerical_attributes:
+        column_name = f"{household}_{attribute.replace(' ', '_')}"
+        # Assign the value for this household and numerical attribute into the new DataFrame
+        df_reorganized[column_name] = [df_households.loc[household, attribute]]
+
+# Check the final DataFrame to ensure everything is properly organized
+print(df_reorganized)
+
+
 # Step 2: Find neighbors within a 2km radius
 def find_neighbors(df, max_distance=2):
     neighbors = {}
@@ -42,81 +76,51 @@ def find_neighbors(df, max_distance=2):
         neighbors[row1.name] = []  # Use household names as keys
         for j, row2 in df.iterrows():
             if i != j:
-                # Fix: Pass both lon2 and lat2 to the haversine function
                 dist = haversine(row1['Longitude'], row1['Latitude'], row2['Longitude'], row2['Latitude'])
                 if dist <= max_distance:
-                    neighbors[row1.name].append(row2.name)  # Use household names as neighbor
+                    neighbors[row1.name].append(row2.name)
     return neighbors
 
-print(find_neighbors(df_households, max_distance=2))
 neighbors = find_neighbors(df_households, max_distance=2)
 
-# Setup Bayesian Network structure without connecting households to each other
-from pgmpy.models import BayesianNetwork
-
+# Step 3: Setup Bayesian Network
+# Step 3: Setup Bayesian Network
 def setup_bayesian_network(neighbors):
     edges = []
 
-    # Internal household dependencies (same as before)
+    # Internal household dependencies
     for household in neighbors.keys():
-        edges.extend([(f'{household}_Electricity', f'{household}_Hou'),
+        edges.extend([(f'{household}_Electricity', f'{household}_House'),
                       (f'{household}_Water', f'{household}_House'),
                       (f'{household}_Food', f'{household}_House'),
                       (f'{household}_House', f'{household}_Temporary_Shelter'),
                       (f'{household}_Injuries', f'{household}_House')])
 
-    # Cross-household dependencies (between neighbors) - make it unidirectional
+    # Cross-household dependencies
     for household, neighbor_list in neighbors.items():
         for neighbor in neighbor_list:
-            # Only add one directional dependency to avoid loops
-            if int(household.split()[1]) < int(neighbor.split()[1]):  # Ensure no reverse edges
+            if int(household.split()[1]) < int(neighbor.split()[1]):
                 edges.append((f'{household}_Electricity', f'{neighbor}_Electricity'))
                 edges.append((f'{household}_Water', f'{neighbor}_Water'))
                 edges.append((f'{household}_Food', f'{neighbor}_Food'))
-                # You can add more cross-household dependencies if needed
+                edges.append((f'{household}_House', f'{neighbor}_House'))
+                edges.append((f'{household}_Injuries', f'{neighbor}_Injuries'))
+                edges.append((f'{household}_Temporary_Shelter', f'{neighbor}_Temporary_Shelter'))
 
-    # Create the Bayesian Network with the edges
+    # Create the Bayesian Network with the defined edges
     model = BayesianNetwork(edges)
-    print(model.nodes)
     return model
 
-
 model = setup_bayesian_network(neighbors)
-print(setup_bayesian_network(neighbors))
-
-print(df_households)
-
 
 # Step 4: Learn CPTs from the observed data using Maximum Likelihood Estimation
 def learn_cpts(model, df):
-    # Ensure that the data frame columns are properly encoded for all households and variables
-    # For example, df should contain columns like 'Household 1_Electricity', 'Household 2_Water', etc.
 
-    # Use MLE to learn the CPTs from the data
+    # Learn CPTs using Maximum Likelihood Estimation
     model.fit(df, estimator=MaximumLikelihoodEstimator)
     return model
 
-# Convert categorical columns to strings (use the correct column names based on your DataFrame)
-categorical_columns = [
-    'Electricity', 'Water', 'Food', 'House', 'Temporary Shelter', 'Injuries'
-]
-
-# Convert all categorical columns to string to avoid mixed data types
-df_households[categorical_columns] = df_households[categorical_columns].astype(str)
-
-# Ensure numerical columns are in the correct format (float or int)
-numerical_columns = ['Scale-Severity', 'Latitude', 'Longitude']
-df_households[numerical_columns] = df_households[numerical_columns].apply(pd.to_numeric)
-
-# Reorganize the DataFrame into the structure required by the Bayesian network
-df_reorganized = df_households.stack().reset_index(drop=True).to_frame()
-
-# Check data types to ensure no mixed types
-print(df_households.dtypes)
-
-# Apply the learned CPTs
-print(learn_cpts(model, df_reorganized))
-
+model = learn_cpts(model, df_reorganized)
 
 # Step 5: Perform inference to predict missing values for a household
 def perform_inference(model, df, household_node):
@@ -125,57 +129,20 @@ def perform_inference(model, df, household_node):
     # Get neighbors for the specified household
     neighbors_list = neighbors[household_node]
 
-    # Select evidence based on neighbors' 'House' values from the dataframe
+    # Select evidence based on neighbors' 'House' values, using the proper column names
     evidence = {}
     for neighbor in neighbors_list:
-        evidence[neighbor] = df.loc[neighbor, 'House']  # Use household name as key
+        neighbor_house_column = f'{neighbor}_House'  # Adjust the column name to match the reorganized DataFrame
+        evidence[neighbor_house_column] = df.loc[0, neighbor_house_column]  # Assuming df has a single row (or adjust accordingly)
 
     # Predict missing values for the 'House' attribute of the specified household
-    result = inference.query(variables=['House'], evidence=evidence)
+    household_house_column = f'{household_node}_House'
+    result = inference.query(variables=[household_house_column], evidence=evidence)
 
     print(result)
 
-
-# Encode categorical variables into numerical format
-label_encoder = LabelEncoder()
-
-for column in ['Electricity', 'Water', 'Food', 'House', 'Temporary Shelter', 'Injuries']:
-    df_households[column] = label_encoder.fit_transform(df_households[column].astype(str))
-
-neighbors = find_neighbors(df_households, max_distance=3)
-
-# Setup Bayesian network with household names
-model = setup_bayesian_network(neighbors)
-model = learn_cpts(model, df_households)
-
 # Perform inference for a specific household node, e.g., 'Household 1'
-perform_inference(model, df_households, household_node='Household 1')
+perform_inference(model, df_reorganized, household_node='Household 1')
 
-
-
-
-# Step 1: Simulate the data (same as before but with some missing data)
-# def simulate_data_with_missing(num_households=10):
-#     np.random.seed(42)
-#     household_names = [f'Household {i+1}' for i in range(num_households)]
-#     hazards = ['Flooded roads', 'Fallen trees', 'Damaged buildings', 'Power lines down', 'Blocked exits or roads']
-#
-#     data = {
-#         'Electricity': np.random.choice(['Yes', 'No', np.nan], num_households, p=[0.45, 0.45, 0.1]),
-#         'Water': np.random.choice(['Yes', 'No', np.nan], num_households, p=[0.45, 0.45, 0.1]),
-#         'Food': np.random.choice(['Yes', 'No', np.nan], num_households, p=[0.45, 0.45, 0.1]),
-#         'Scale-Severity': np.random.randint(1, 11, num_households),
-#         'House': np.random.choice(['Yes', 'No', np.nan], num_households, p=[0.45, 0.45, 0.1]),
-#         'Temporary Shelter': np.random.choice(['Yes', 'No', np.nan], num_households, p=[0.45, 0.45, 0.1]),
-#         'Injuries': np.random.choice(['Yes', 'No', np.nan], num_households, p=[0.45, 0.45, 0.1]),
-#         'Visible Hazards': [np.random.choice(hazards, size=np.random.randint(1, 4), replace=False) for _ in range(num_households)],
-#         'Latitude': np.random.uniform(-90, 90, num_households),
-#         'Longitude': np.random.uniform(-180, 180, num_households)
-#     }
-#
-#     df_households = pd.DataFrame(data, index=household_names)
-# # Apply one-hot encoding to Visible Hazards
-# hazards_df = pd.get_dummies(df_households['Visible Hazards'].apply(pd.Series).stack()).groupby(level=0).sum()
-# df_households = pd.concat([df_households.drop(columns='Visible Hazards'), hazards_df], axis=1)
-#
-# return df_households
+# Print the final dataframe
+print(df_reorganized)
