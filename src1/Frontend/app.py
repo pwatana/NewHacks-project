@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import csv
 import os
-# import pandas as pd
+import pandas as pd
 
 
 app = Flask(__name__)
@@ -26,10 +26,10 @@ def form():
         latitude = request.form['latitude']
         longitude = request.form['longitude']
 
-        numberinput = request.form['numberinput']
+        people = request.form['people']
         house = request.form['house']
 
-        fieldnames = ["name", "contactInfo", "disasterType", "severity", "hazards", "casualties", "shelter", "food", "water", "electricity", "numberinput", "house", "location"]
+        fieldnames = ["name", "contactInfo", "disasterType", "severity", "hazards", "casualties", "shelter", "food", "water", "electricity", "people", "house", "location"]
 
         with open('../data/data.csv','a') as inFile:
             writer = csv.DictWriter(inFile, fieldnames=fieldnames)
@@ -39,7 +39,7 @@ def form():
                             "disasterType": disasterType, "severity": severity, 
                             "hazards": hazards, "casualties": casualties, 
                             "shelter": shelter, "food": food, "water": water, 
-                            "electricity": electricity, "numberinput":numberinput, "house": house,
+                            "electricity": electricity, "people":people, "house": house,
                             "location": (float(latitude), float(longitude))})
     return render_template('form.html')
 

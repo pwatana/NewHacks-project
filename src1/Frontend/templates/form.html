@@ -99,15 +99,15 @@
             </div>
         </div>
 
-        <label for="casualties">Casualties or Injuries Reported?</label>
-        <select id="casualties" name="casualties" style="width: 75px;" onchange="toggleCasualtyInput()">
+        <label for="casualties">Do you have any injuries?</label>
+        <select id="casualties" name="casualties" style="width: 75px;">
             <option value="No">No</option>
             <option value="Yes">Yes</option>
         </select>
 
-        <div id="casualtyCountContainer" style="display: none;">
-            <label for="casualtyCount">Please specify how many people:</label>
-            <input type="number" id="casualtyCount" name="casualtyCount" min="0" style="width: 100px;">
+        <div id="casualtyCountContainer">
+            <label for="casualtyCount">Please specify how many people are in your party:</label>
+            <input type="number" id="casualtyCount" name="people" min="0" style="width: 100px;">
         </div>
 
         <!-- Immediate Needs -->
@@ -174,16 +174,6 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    function toggleCasualtyInput() {
-    const casualtySelect = document.getElementById('casualties');
-    const casualtyCountContainer = document.getElementById('casualtyCountContainer');
-
-    if (casualtySelect.value === 'Yes') {
-        casualtyCountContainer.style.display = 'block';
-    } else {
-        casualtyCountContainer.style.display = 'none';
-    }
-}
     document.addEventListener("DOMContentLoaded", () => {
         const map = L.map('map').setView([43.66464895584507, -79.39972218955619], 15);
         document.getElementById("latitude").value = 43.66464895584507;
