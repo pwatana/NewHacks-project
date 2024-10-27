@@ -91,12 +91,6 @@
 
         <label for="number of people">Number of people with you</label>
         <input type="number" id="numberinput" name="numberinput" min = 0>
-        <label for="propertyDamage">Property Damage Severity:</label>
-        <select id="propertyDamage" name="propertyDamage">
-            <option value="Minimal">Minimal</option>
-            <option value="Moderate">Moderate</option>
-            <option value="Severe">Severe</option>
-            <option value="Catastrophic">Catastrophic</option>
         </select>
 
         <!-- Immediate Needs -->
@@ -104,6 +98,11 @@
             <h3>Immediate Needs</h3>
             <div class="form-container">
                 <!-- Temporary Shelter Question -->
+                <div class="section">
+                    <label>Do you have a house?</label>
+                    <input type="radio" name="house" value="yes" required > Yes
+                    <input type="radio" name="house" value="no"> No
+                </div>
                 <div class="section">
                     <label>Do you have a temporary shelter?</label>
                     <input type="radio" name="shelter" value="yes" required > Yes

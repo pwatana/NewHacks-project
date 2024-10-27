@@ -105,3 +105,70 @@ textarea {
 .submit-button:hover {
     background-color: #218838;
 }
+/* Reset */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Header */
+.header {
+    background-color: #002f5f;
+    color: white;
+    padding: 20px;
+    text-align: left;
+    font-size: 24px;
+}
+
+/* Main section */
+.main-section {
+    position: relative;
+    text-align: center;
+    color: white;
+    font-size: 32px;
+}
+
+/* Background image */
+.main-section img {
+    width: 100%;
+    height: auto;
+    opacity: 0.85;
+}
+
+/* Overlay text */
+.overlay-text {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Subtitle */
+.overlay-text h2 {
+    font-size: 20px;
+    margin: 0;
+}
+
+/* Main Title */
+.overlay-text h1 {
+    font-size: 48px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+/* Button */
+.btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #004a87;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 18px;
+}
+
+.btn:hover {
+    background-color: #003366;
+}
