@@ -1,7 +1,7 @@
 /* General body styles */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+    font-family: 'Roboto', sans-serif; /* Use a nicer font */
+    background-color: #eaeaea; /* Light background */
     margin: 0;
     padding: 0;
 }
@@ -9,11 +9,11 @@ body {
 /* Form container styling */
 .form-container {
     max-width: 800px;
-    margin: 20px auto;
+    margin: 40px auto;
     padding: 20px;
     background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 h2 {
@@ -29,8 +29,8 @@ h3 {
 #map {
     height: 400px;
     width: 100%;
-    border-radius: 8px;
-    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Button styling */
@@ -57,13 +57,15 @@ button:hover {
 /* Section styling */
 .section {
     margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Input and select styles */
-input[type="text"], 
-input[type="radio"], 
-input[type="checkbox"], 
-select, 
+input[type="text"],
+select,
 textarea {
     width: calc(100% - 20px);
     padding: 10px;
@@ -76,10 +78,22 @@ textarea {
     resize: vertical;
 }
 
+/* Styles for radio buttons */
+.radio-container {
+    display: flex;          /* Use flexbox for alignment */
+    align-items: center;   /* Aligns the radio button and label vertically */
+    margin-bottom: 8px;    /* Space between options */
+}
+
+.radio-container input[type="radio"] {
+    width: auto;           /* Make width auto for better alignment */
+    margin-right: 8px;     /* Space between the radio button and label */
+}
+
 /* Slider styles */
 .slider {
     -webkit-appearance: none;
-    width: 100%;
+    width: 50%;
     height: 10px;
     background: #ddd;
     border-radius: 5px;
@@ -94,16 +108,18 @@ textarea {
 
 /* Submit button styling */
 .submit-button {
-    background-color: #28a745;
+    background-color: #005cac; 
     color: white;
     border: none;
     border-radius: 5px;
     padding: 10px 20px;
     cursor: pointer;
+    margin: 0 10px;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .submit-button:hover {
-    background-color: #218838;
+    background-color: #005cac; ;
 }
 /* Reset */
 body, html {
@@ -114,11 +130,11 @@ body, html {
 
 /* Header */
 .header {
-    background-color: #002f5f;
+    background-color: #003c30; /* Dark green */
     color: white;
     padding: 20px;
-    text-align: left;
-    font-size: 24px;
+    text-align: center;
+    font-size: 28px;
 }
 
 /* Main section */
@@ -159,16 +175,36 @@ body, html {
 
 /* Button */
 .btn {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #004a87;
+    background-color: #00796b; /* Teal */
     color: white;
-    text-decoration: none;
+    border: none;
+    display: inline-flex; /* Use inline-flex for better layout */
+    justify-content: center; /* Center content within button */
+    align-items: center; /* Align items vertically */
     border-radius: 5px;
-    font-size: 18px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin: 10px; /* Add margin for spacing */
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .btn:hover {
+    background-color: #005cac; ; 
+    transform: scale(1.05); 
+}
+
+
+.btn:hover {
     background-color: #003366;
+}
+
+@media (max-width: 768px) {
+    .form-container {
+        padding: 10px;
+    }
+    
+    button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
 }
