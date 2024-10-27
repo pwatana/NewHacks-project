@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import csv
 import os
-# import pandas as pd
+import pandas as pd
 
 
 app = Flask(__name__)
@@ -73,6 +73,7 @@ def locations():
         latitude, longitude = map(float, location.split(", "))  # Split by comma and space, and convert to floats
         locations.append({
             "name": row['name'],
+            "contactInfo":row['contactInfo'],
             "disasterType": row['disasterType'],
             "latitude": latitude,
             "longitude": longitude
@@ -88,6 +89,7 @@ def locations():
         latitude2, longitude2 = map(float, location2.split(", "))  # Split by comma and space, and convert to floats
         locations2.append({
             "name": row['name'],
+            "contactInfo":row['contactInfo'],
             "disasterType": row['disasterType'],
             "latitude": latitude2,
             "longitude": longitude2

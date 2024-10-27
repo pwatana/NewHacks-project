@@ -12,6 +12,12 @@
             width: 100%;
             margin-bottom: 20px;
         }
+        /* Layout for side-by-side tables */
+        .table-container {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -32,21 +38,47 @@
     <!-- Map Section -->
     <div id="map"></div>
 
-    <!-- Table Section -->
-    <h3>Reported Locations</h3>
-    <table id="locationTable">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Disaster Type</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Rows will be populated here -->
-        </tbody>
-    </table>
+    <!-- Tables Section -->
+    <h3>Locations from Reported Data nad Interpolated Data</h3>
+    <div class="table-container">
+        <!-- Table for CSV 1 -->
+        <div>
+            <h4>Reported Data</h4>
+            <table id="locationTable1">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Contact Info</th>
+                        <th>Disaster Type</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be populated here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Table for CSV 2 -->
+        <div>
+            <h4>Interpolated Data</h4>
+            <table id="locationTable2">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Contact Info</th>
+                        <th>Disaster Type</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
@@ -59,54 +91,57 @@
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
 
+            // Define icons for markers from each CSV
+            const icons = {
+                red: new L.Icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                }),
+                green: new L.Icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                })
+            };
+
             // Fetch location data from the Flask backend
             fetch('/locations')
                 .then(response => response.json())
                 .then(data => {
-                    const tableBody = document.getElementById('locationTable').querySelector('tbody');
-                    const redIcon = new L.Icon({
-                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                        iconSize: [25, 41],
-                        iconAnchor: [12, 41],
-                        popupAnchor: [1, -34],
-                        shadowSize: [41, 41]
-                    });
-                    // Loop through locations from the first CSV (red markers)
-                    data.locations1.forEach(location => {
-                        const { name, disasterType, latitude, longitude } = location;
-
-                        L.marker([latitude, longitude]).addTo(map)
-                            .bindPopup(`<strong>${name}</strong><br>Type: ${disasterType}`);
-
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${name}</td>
-                            <td>${disasterType}</td>
-                            <td>${latitude}</td>
-                            <td>${longitude}</td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
-
-                    // Loop through locations from the second CSV (green markers)
-                    data.locations2.forEach(location => {
-                        const { name, disasterType, latitude, longitude } = location;
-
-                        L.marker([latitude, longitude], { icon: redIcon }).addTo(map)
-                            .bindPopup(`<strong>${name}</strong><br>Type: ${disasterType}`);
-
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${name}</td>
-                            <td>${disasterType}</td>
-                            <td>${latitude}</td>
-                            <td>${longitude}</td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
+                    populateTableAndMap(data.locations1, 'locationTable1', icons.red);
+                    populateTableAndMap(data.locations2, 'locationTable2', icons.green);
                 })
                 .catch(error => console.error('Error fetching location data:', error));
+
+            // Function to populate a table and add markers based on data and icon
+            function populateTableAndMap(locations, tableId, icon) {
+                const tableBody = document.getElementById(tableId).querySelector('tbody');
+                locations.forEach(location => {
+                    const { name, disasterType, contactInfo, latitude, longitude } = location;
+
+                    // Add marker to the map
+                    L.marker([latitude, longitude], { icon: icon }).addTo(map)
+                        .bindPopup(`<strong>${name}</strong><br>Contact: ${contactInfo}<br>Type: ${disasterType}`);
+
+                    // Add row to the table
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${name}</td>
+                        <td>${contactInfo}</td>
+                        <td>${disasterType}</td>
+                        <td>${latitude}</td>
+                        <td>${longitude}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
         });
     </script>
 </body>

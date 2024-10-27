@@ -10,3 +10,4 @@ Ray,Your mother,Volcano,5,"['Flooded Roads', 'Damaged Buildings']",Yes,yes,yes,y
 a,a,Earthquake,10,['Damaged Buildings'],No,yes,yes,yes,yes,1,no,"(43.66464895584507, -79.39972218955619)"
 a,a,Hurricane,10,['Damaged Buildings'],No,yes,no,no,no,1,no,"(43.66464895584507, -79.39972218955619)"
 test,a,Earthquake,10,['Damaged Buildings'],No,no,no,no,no,1,no,"(43.662815009095816, -79.39759254455568)"
+a,a,Earthquake,10,['Flooded Roads'],No,yes,yes,yes,yes,12,yes,"(43.659635238358604, -79.3969388682505)"
