@@ -6,15 +6,47 @@
     <title>Natural Disaster Live Condition Report</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
+        /* Map and Table Styling */
         #map {
             height: 400px;
             width: 100%;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
         }
     </style>
 </head>
 <body>
     <h2>Natural Disaster Live Condition Report</h2>
+
+    <!-- Map Section -->
     <div id="map"></div>
+
+    <!-- Table Section -->
+    <h3>Reported Locations</h3>
+    <table id="locationTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Disaster Type</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be populated here -->
+        </tbody>
+    </table>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
@@ -27,15 +59,51 @@
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
 
-            // Fetch location data from Flask backend
+            // Fetch location data from the Flask backend
             fetch('/locations')
                 .then(response => response.json())
                 .then(data => {
-                    data.forEach(location => {
+                    const tableBody = document.getElementById('locationTable').querySelector('tbody');
+                    const redIcon = new L.Icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    });
+                    // Loop through locations from the first CSV (red markers)
+                    data.locations1.forEach(location => {
                         const { name, disasterType, latitude, longitude } = location;
-                        // Create a marker and bind a popup with the name and disaster type
+
                         L.marker([latitude, longitude]).addTo(map)
                             .bindPopup(`<strong>${name}</strong><br>Type: ${disasterType}`);
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${name}</td>
+                            <td>${disasterType}</td>
+                            <td>${latitude}</td>
+                            <td>${longitude}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+
+                    // Loop through locations from the second CSV (green markers)
+                    data.locations2.forEach(location => {
+                        const { name, disasterType, latitude, longitude } = location;
+
+                        L.marker([latitude, longitude], { icon: redIcon }).addTo(map)
+                            .bindPopup(`<strong>${name}</strong><br>Type: ${disasterType}`);
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${name}</td>
+                            <td>${disasterType}</td>
+                            <td>${latitude}</td>
+                            <td>${longitude}</td>
+                        `;
+                        tableBody.appendChild(row);
                     });
                 })
                 .catch(error => console.error('Error fetching location data:', error));

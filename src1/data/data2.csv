@@ -1,0 +1,12 @@
+name,contactInfo,disasterType,severity,hazards,casualties,shelter,food,water,electricity,numberinput,house,location
+zJohn Doe,555-1234,Flood,5,"Flooded roads, Power lines down",Yes,Yes,Yes,No,Yes,123,Household A,"(43.65107, -79.347015)"
+zJane Smith,555-5678,Hurricane,8,"Damaged buildings, Fallen trees",No,No,Yes,Yes,No,456,Household B,"(45.4215, -75.697193)"
+zSam Wilson,555-2345,Earthquake,6,"Blocked exits, Fallen trees",Yes,Yes,No,Yes,Yes,789,Household C,"(49.2827, -123.1207)"
+zEmily Brown,555-6789,Tornado,7,"Damaged buildings",No,No,Yes,Yes,No,321,Household D,"(34.0522, -118.2437)"
+zMichael Green,555-3456,Wildfire,9,"Fallen trees, Power lines down",Yes,Yes,Yes,Yes,Yes,654,Household E,"(40.7128, -74.0060)"
+zSarah Lee,555-9876,Landslide,4,"Blocked exits",No,Yes,Yes,No,No,987,Household F,"(37.7749, -122.4194)"
+za,a,Earthquake,10,['Fallen Trees'],No,yes,yes,yes,yes,10,yes,"(43.65961907167799, -79.39698509490353)"
+zRay,Your mother,Volcano,5,"['Flooded Roads', 'Damaged Buildings']",Yes,yes,yes,yes,no,0,yes,"(36.88347895803545, -234.14062500000003)"
+za,a,Earthquake,10,['Damaged Buildings'],No,yes,yes,yes,yes,1,no,"(43.66464895584507, -76.39972218955619)"
+za,a,Hurricane,10,['Damaged Buildings'],No,yes,no,no,no,1,no,"(43.66464895584507, -76.39972218955619)"
+ztest,a,Earthquake,10,['Damaged Buildings'],No,no,no,no,no,1,no,"(43.662815009095816, -76.39759254455568)"

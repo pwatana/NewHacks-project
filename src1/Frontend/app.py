@@ -51,7 +51,11 @@ def save_image():
     image = request.files['image']
     numbers = []
     for filename in os.listdir("../data/images"):
-        numbers.append(int(filename.split('.')[0]))
+        print(filename[-3:])
+        if filename.lower().endswith(".png"):  # Case-insensitive check for .png
+            print("appending")
+            numbers.append(int(filename.split('.')[0]))
+    print(numbers)
     next_number = max(numbers) + 1 if numbers else 1
     image.save("../data/images/" + str(next_number) + ".png")  # Save the image to the photos folder
     print("Saved!")
@@ -74,7 +78,22 @@ def locations():
             "longitude": longitude
         })
 
-    return jsonify(locations)  # Send JSON data to the frontend
+    # Load the CSV data
+    df2 = pd.read_csv('../data/data2.csv')
+    
+    # Extract latitude and longitude from the location tuple string
+    locations2 = []
+    for _, row in df2.iterrows():
+        location2 = row['location'].strip("()")  # Remove parentheses
+        latitude2, longitude2 = map(float, location2.split(", "))  # Split by comma and space, and convert to floats
+        locations2.append({
+            "name": row['name'],
+            "disasterType": row['disasterType'],
+            "latitude": latitude2,
+            "longitude": longitude2
+        })
+
+    return jsonify({"locations1": locations, "locations2": locations2})  # Send JSON data to the frontend
 
 @app.route('/results', methods=['GET'])
 def results():
