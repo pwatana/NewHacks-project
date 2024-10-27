@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
 
 # Step 1: Define the hazard values
 hazard_values = {
@@ -12,8 +14,8 @@ hazard_values = {
     'Blocked exits or roads': 3
 }
 
-# Step 2: Generate the data with multiple hazards
-def simulate_data(num_households=5):
+# Step 2: Generate the data with multiple hazards and address column
+def simulate_data(num_households=1000):
     np.random.seed(42)
     household_names = [f'Household {i+1}' for i in range(num_households)]
 
@@ -28,7 +30,8 @@ def simulate_data(num_households=5):
         'Injuries': np.random.choice(['Yes', 'No'], num_households),
         'Visible Hazards': [np.random.choice(hazards, size=np.random.randint(1, 4), replace=False) for _ in range(num_households)],
         'Type of Disaster': np.random.choice(['Hurricane', 'Flood', 'Wildfire', 'Earthquake', 'Tornado'], num_households),
-        'User\'s Contact Information': np.random.choice(['123-456-7890', 'example@mail.com', '456-789-0123', 'contact@domain.com', '789-012-3456'], num_households)
+        'User\'s Contact Information': np.random.choice(['123-456-7890', 'example@mail.com', '456-789-0123', 'contact@domain.com', '789-012-3456'], num_households),
+        'Address': [(round(np.random.uniform(-180, 180), 6), round(np.random.uniform(-90, 90), 6)) for _ in range(num_households)]  # Random Longitude, Latitude
     }
 
     df_households = pd.DataFrame(data, index=household_names)
@@ -79,8 +82,8 @@ def feature_engineer(df):
     scaler = MinMaxScaler()
     df[['Hazard Score', 'Scale-Severity', 'Damage Index', 'Weighted Hazard Score']] = scaler.fit_transform(df[['Hazard Score', 'Scale-Severity', 'Damage Index', 'Weighted Hazard Score']])
 
-    # Drop irrelevant columns
-    df = df.drop(['User\'s Contact Information', 'Type of Disaster', 'Visible Hazards'], axis=1)
+    # Drop irrelevant columns for clustering (including Address for now)
+    df = df.drop(['User\'s Contact Information', 'Type of Disaster', 'Visible Hazards', 'Address'], axis=1)
 
     return df
 
@@ -94,21 +97,6 @@ def apply_pca(df, n_components=2):
     df_pca = pd.DataFrame(df_pca, columns=pca_columns)
 
     return df_pca
-
-# Simulate the data
-df_households = simulate_data()
-
-# Apply feature engineering (One-Hot Encoding, interaction terms, scaling, etc.)
-df_engineered = feature_engineer(df_households.copy())
-
-# Apply PCA to reduce dimensionality
-df_pca = apply_pca(df_engineered)
-
-# Display the final dataset with PCA applied
-print(df_pca)
-
-from sklearn.cluster import KMeans
-import matplotlib.pyplot as plt
 
 # Step 6: Apply KMeans Clustering
 def apply_kmeans(df, n_clusters=3):
@@ -153,3 +141,6 @@ df_clustered, kmeans_model = apply_kmeans(df_pca)
 
 # Visualize the clusters
 visualize_clusters(df_clustered, kmeans_model)
+
+# Show the original data including the 'Address' column to be used after clustering
+print(df_households[['Address', 'Hazard Score']].sort_values(by='Hazard Score', ascending=False))
