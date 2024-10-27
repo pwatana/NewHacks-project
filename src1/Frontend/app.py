@@ -73,6 +73,7 @@ def locations():
         latitude, longitude = map(float, location.split(", "))  # Split by comma and space, and convert to floats
         locations.append({
             "name": row['name'],
+            "contactInfo":row['contactInfo'],
             "disasterType": row['disasterType'],
             "latitude": latitude,
             "longitude": longitude
@@ -88,12 +89,17 @@ def locations():
         latitude2, longitude2 = map(float, location2.split(", "))  # Split by comma and space, and convert to floats
         locations2.append({
             "name": row['name'],
+            "contactInfo":row['contactInfo'],
             "disasterType": row['disasterType'],
             "latitude": latitude2,
             "longitude": longitude2
         })
 
     return jsonify({"locations1": locations, "locations2": locations2})  # Send JSON data to the frontend
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
 
 @app.route('/results', methods=['GET'])
 def results():
