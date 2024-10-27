@@ -129,18 +129,20 @@ def perform_inference(model, df, household_node):
     # Get neighbors for the specified household
     neighbors_list = neighbors[household_node]
 
-    # Select evidence based on neighbors' 'House' values
+    # Select evidence based on neighbors' 'House' values, using the proper column names
     evidence = {}
     for neighbor in neighbors_list:
-        evidence[neighbor] = df.loc[neighbor, 'House']
+        neighbor_house_column = f'{neighbor}_House'  # Adjust the column name to match the reorganized DataFrame
+        evidence[neighbor_house_column] = df.loc[0, neighbor_house_column]  # Assuming df has a single row (or adjust accordingly)
 
     # Predict missing values for the 'House' attribute of the specified household
-    result = inference.query(variables=['House'], evidence=evidence)
+    household_house_column = f'{household_node}_House'
+    result = inference.query(variables=[household_house_column], evidence=evidence)
 
     print(result)
 
 # Perform inference for a specific household node, e.g., 'Household 1'
-perform_inference(model, df_households, household_node='Household 1')
+perform_inference(model, df_reorganized, household_node='Household 1')
 
 # Print the final dataframe
-print(df_households)
+print(df_reorganized)
