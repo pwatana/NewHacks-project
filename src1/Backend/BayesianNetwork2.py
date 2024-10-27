@@ -84,6 +84,7 @@ def find_neighbors(df, max_distance=2):
 neighbors = find_neighbors(df_households, max_distance=2)
 
 # Step 3: Setup Bayesian Network
+# Step 3: Setup Bayesian Network
 def setup_bayesian_network(neighbors):
     edges = []
 
@@ -102,6 +103,9 @@ def setup_bayesian_network(neighbors):
                 edges.append((f'{household}_Electricity', f'{neighbor}_Electricity'))
                 edges.append((f'{household}_Water', f'{neighbor}_Water'))
                 edges.append((f'{household}_Food', f'{neighbor}_Food'))
+                edges.append((f'{household}_House', f'{neighbor}_House'))
+                edges.append((f'{household}_Injuries', f'{neighbor}_Injuries'))
+                edges.append((f'{household}_Temporary_Shelter', f'{neighbor}_Temporary_Shelter'))
 
     # Create the Bayesian Network with the defined edges
     model = BayesianNetwork(edges)
